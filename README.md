@@ -1,8 +1,11 @@
 # loom-jung
 
-`loom-jung` provides wrappers for loom graphs for use with JUNG, the
-Java Universal Graph Library.  This is particularly useful for taking
-advantage of JUNG's Swing-based graph visualization facilities.
+`loom-jung` provides wrappers for
+[`loom`](https://github.com/aysylu/loom) graphs for use with JUNG, the
+[Java Universal Network/Graph
+Framework](http://jung.sourceforge.net/).  This is particularly useful
+for taking advantage of JUNG's Swing-based graph visualization
+facilities.
 
 ## Usage
 
