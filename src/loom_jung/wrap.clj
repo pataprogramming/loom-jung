@@ -59,19 +59,19 @@
       (getEdgeType [e]
         (.getDefaultEdgeType this))
 
-      (getIncidentEdges [v]
-        (let [succ       (l/neighbors @lg v)
+      (getIncidentEdges [v] ;; FIXME: Check if JUNG expects incoming edges as well
+        (let [succ       (l/successors @lg v)
               succ-edges (for [w succ] [v w])]
           (if (l/directed? @lg)
-            (let [pred       (l/incoming @lg v)
+            (let [pred       (l/predecessors @lg v)
                   pred-edges (for [u pred] [u v])]
               (concat pred-edges succ-edges))
             succ-edges)))
 
       (getNeighbors [v]
         (if (l/directed? @lg)
-          (set/union (l/incoming @lg v) (l/neighbors @lg v))
-          (l/neighbors @lg v)))
+          (set/union (l/predecessors @lg v) (l/successors @lg v))
+          (l/successors @lg v)))
 
       (getVertexCount []
         (count (l/nodes @lg)))
@@ -93,16 +93,16 @@
 
       (getInEdges [v]
         (if (l/directed? @lg)
-          (l/incoming @lg v)
-          (l/neighbors @lg v)))
+          (l/predecessors @lg v)
+          (l/successors @lg v)))
 
       (getOutEdges [v]
-        (l/neighbors @lg v))
+        (l/successors @lg v))
 
       (getPredecessors [v]
         (if (l/directed? @lg)
-          (l/incoming @lg v)
-          (l/neighbors @lg v)))
+          (l/predecessors @lg v)
+          (l/successors @lg v)))
 
       (getDest [e]
         (if (and (l/directed? @lg)
@@ -119,7 +119,7 @@
           (first (seq e))))
 
       (getSuccessors [v]
-        (l/neighbors @lg v))
+        (l/successors @lg v))
 
       (isDest [v e]
         (= v (.getDest this e)))

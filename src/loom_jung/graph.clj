@@ -1,7 +1,6 @@
 (ns loom-jung.graph
-  (:use     [operas.core])
-  (:require [taoensso.timbre :as timbre
-             :refer (trace debug info warn error fatal spy with-log-level)])
+  ;; (:require [taoensso.timbre :as timbre
+  ;;            :refer (trace debug info warn error fatal spy with-log-level)])
   (:import (java.io StringWriter)
            (java.awt Color Dimension Paint Polygon Shape Stroke BasicStroke Point)
            (javax.swing JFrame BoxLayout JPanel JButton JTextArea)
@@ -14,6 +13,9 @@
            (edu.uci.ics.jung.visualization.renderers BasicEdgeRenderer Renderer$Vertex)
            (org.apache.commons.collections15 Predicate Transformer)))
 
+(defn dissoc-in [coll keys key] ; FIXME: switch to private
+  (assoc-in coll keys (dissoc (get-in coll keys) key)))
+
 (defn make-transformer [f]
      (proxy [Transformer] []
        (transform [o]
@@ -24,7 +26,7 @@
        (evaluate [o]
          (f o))))
 
-(defn jung-directed-graph []
+ (defn jung-directed-graph []
   (DirectedSparseGraph.))
 
 (defn jung-undirected-graph []
@@ -116,7 +118,7 @@
         (jung-set-property! jgh a1 a2 a3 )))
     :remove-vertex
     (do
-      (debug "GRAPH REMOVE applying: " (str k " " a1 " " a2 " " a3))
+      #_(debug "GRAPH REMOVE applying: " (str k " " a1 " " a2 " " a3))
       (jung-remove-vertex! jgh a1))
     :add-edge
     (jung-add-edge! jgh a1 a2)
