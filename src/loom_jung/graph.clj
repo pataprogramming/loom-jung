@@ -1,4 +1,4 @@
-(ns operas.graph
+(ns loom-jung.graph
   (:use     [operas.core])
   (:require [taoensso.timbre :as timbre
              :refer (trace debug info warn error fatal spy with-log-level)])

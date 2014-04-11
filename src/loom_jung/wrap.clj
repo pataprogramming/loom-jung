@@ -1,4 +1,4 @@
-(ns operas.loomwrap
+(ns loom-jung.wrap
   (:require   [loom.graph :as l]
               [clojure.set :as set])
   (:import    (edu.uci.ics.jung.graph AbstractGraph)
