@@ -1,0 +1,36 @@
+In RenderContext:
+
+| :arrow-draw            | setArrowDrawPaintTransformer     | E->Paint          |
+| :arrow-fill            | setArrowFillPaintTransformer     | E->Paint          |
+| :arrow-tolerance       | setArrowPlacementTolerance       | float             |
+| :arrow-stroke          | setEdgeArrowStrokeTransformer    | E->Stroke         |
+| :edge-arrow?           | setEdgeArrowPredicate            | Context,E         |
+| :edge-arrow            | setEdgeArrowTransformer          | Context,E->Shape  |
+| :edge-draw             | setEdgeDrawPaintTransformer      | E->Paint          |
+| :edge-fill             | setEdgeFillPaintTransformer      | E->Paint          |
+| :edge-font             | setEdgeFontTransformer           | E->Font           |
+| :edge-include          | setEdgeIncludePredicate          | Context,E->E      |
+| :edge-label-closeness  | setEdgeLabelClosenessTransformer | Context,E->Number |
+| :edge-label            | setEdgeLabelTransformer          | E->String         |
+| :edge-shape            | setEdgeShapeTransformer          | Context,E->Shape  |
+| :edge-stroke           | setEdgeStrokeTransformer         | E->Stroke         |
+| :label-offset          | setLabelOffset                   | int               |
+| :vertex-draw           | setVertexDrawPaintTransformer    | V->Paint          |
+| :vertex-fill           | setVertexFillPaintTransformer    | V->Paint          |
+| :vertex-font           | setVertexFontTransformer         | V->Font           |
+| :vertex-icon           | setVertexIconTransformer         | V->Icon           |
+| :vertex-include?       | setVertexIncludePredicate        | Context,V         |
+| :vertex-label          | setVertexLabelTransformer        | V->String         |
+| :vertex-shape          | setVertexShapeTransformer        | V->Shape          |
+| :vertex-stroke         | setVertexStrokeTransformer       | V->Stroke         |
+
+| :edge-label-renderer   | setEdgeLabelRenderer             | <unimplemented>   |
+| :vertex-label-renderer | setVertexLabelRenderer           | <unimplemented>   |
+| :graphics-context      | setGraphicsContext               | <unimplemented>   |
+| :multi-layer           | setMultiLayerTransformer         | <unimplemented>   |
+| :parallel-edge-index   | setParallelEdgeIndexFunction     | <unimplemented>   |
+| :picked-edge-state     | setPickedEdgeState               | <unimplemented>   |
+| :picked-vertex-state   | setPickedVertexState             | <unimplemented>   |
+| :pick-support          | setPickSupport                   | <unimplemented>   |
+| :renderer-pane         | setRendererPane                  | <unimplemented>   |
+| :screen-device         | setScreenDevice                  | <unimplemented>   |
