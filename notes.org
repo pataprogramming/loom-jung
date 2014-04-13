@@ -1,3 +1,5 @@
+config entries for the Seesaw wrappers for JUNG graphs
+
 In RenderContext:
 
 | :arrow-draw            | setArrowDrawPaintTransformer     | E->Paint          |
