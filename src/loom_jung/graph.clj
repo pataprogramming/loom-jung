@@ -17,16 +17,28 @@
   (assoc-in coll keys (dissoc (get-in coll keys) key)))
 
 (defn make-transformer [f]
-     (proxy [Transformer] []
-       (transform [o]
-         (f o))))
+  (if (instance? Transformer f)
+    f
+    (reify
+      Transformer
+      (transform [this o]
+        (f o))
+      clojure.lang.IFn
+      (invoke [this arg] (.transform this arg))
+      (applyTo [this [arg]] (.transform this arg)))))
 
 (defn make-predicate [f]
-     (proxy [Predicate] []
-       (evaluate [o]
-         (f o))))
+  (if (instance? Predicate f)
+    f
+    (reify
+      Predicate
+      (evaluate [this o]
+        (f o))
+      clojure.lang.IFn
+      (invoke [this arg] (.evaluate this arg))
+      (applyTo [this [arg]] (.evaluate this arg)))))
 
- (defn jung-directed-graph []
+(defn jung-directed-graph []
   (DirectedSparseGraph.))
 
 (defn jung-undirected-graph []
