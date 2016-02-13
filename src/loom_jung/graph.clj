@@ -39,29 +39,29 @@
   ([g] (JungGraphHandler. g (ref {}))))
 
 (defn jung-add-vertex! [jgh v]
-  (if (.addVertex (:jg jgh) v)
+  (when (.addVertex (:jg jgh) v)
     v))
 
 (defn jung-remove-vertex! [jgh v]
   (swap! (:properties jgh) #(dissoc % v))
-  (if (.removeVertex (:jg jgh ) v)
+  (when (.removeVertex (:jg jgh ) v)
     v))
 
 (defn jung-add-edge! [jgh v w]
-  (if (and (.containsVertex (:jg jgh) v)
+  (when (and (.containsVertex (:jg jgh) v)
            (.containsVertex (:jg jgh) w))
-    (if (.containsEdge (:jg jgh) [w v])
+    (when (.containsEdge (:jg jgh) [w v])
       [w v]
       (do
-        (if (.addEdge (:jg jgh) [v w] v w)
+        (when (.addEdge (:jg jgh) [v w] v w)
           [v w])))))
 
 (defn jung-remove-edge! [jgh v w]
   (if (.containsEdge (:jg jgh) [v w])
-    (if (.removeEdge (:jg jgh) [v w])
+    (when (.removeEdge (:jg jgh) [v w])
       [v w])
-    (if (.containsEdge (:jg jgh) [w v])
-      (if (.removeEdge (:jg jgh) [w v])
+    (when (.containsEdge (:jg jgh) [w v])
+      (when (.removeEdge (:jg jgh) [w v])
         [w v]))))
 
 (defn jung-empty! [jgh]
@@ -75,7 +75,7 @@
     (println g)))
 
 (defn jung-set-property! [jgh v key val]
-  (if (.containsVertex (:jg jgh) v)
+  (when (.containsVertex (:jg jgh) v)
     (dosync
      (alter (:properties jgh) #(assoc-in % [v key] val)))))
 
@@ -96,7 +96,7 @@
     (apply func old-val val)))
 
 (defn jung-update-property! [jgh v key val-action]
-  (if (.containsVertex (:jg jgh) v)
+  (when (.containsVertex (:jg jgh) v)
     (dosync
      (alter (:properties jgh) #(assoc-in % [v key]
                                          (jung-loc-step (get-in % [v key]) val-action))))))
@@ -114,7 +114,7 @@
     :add-vertex
     (do
       (jung-add-vertex! jgh a1)
-      (if (and a2 a3)
+      (when (and a2 a3)
         (jung-set-property! jgh a1 a2 a3 )))
     :remove-vertex
     (do
