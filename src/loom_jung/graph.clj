@@ -160,99 +160,91 @@
              (.setBackground Color/WHITE))]
     vv))
 
-(defn set-edge-renderer [jvh er]
+(defn edge-renderer! [jvh er]
   ;; er should be an instance of EdgeRenderer
   (let [r (.getRenderer (:visualizer jvh))]
     (.setEdgeRenderer r er)))
 
-(defn set-vertex-label-function [jvh f]
+(defn vertex-label-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setVertexLabelTransformer rc (make-transformer f))
     jvh))
 
-(defn set-vertex-shape-function [jvh f]
+(defn vertex-shape-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setVertexShapeTransformer rc (make-transformer f))
     jvh))
 
-(defn set-vertex-stroke-function [jvh f]
+(defn vertex-stroke-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setVertexStrokeTransformer rc (make-transformer f))
     jvh))
 
-(defn set-vertex-draw-paint-function [jvh f]
+(defn vertex-draw-paint-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setVertexDrawPaintTransformer rc (make-transformer f))
     jvh))
 
-(defn set-vertex-fill-paint-function [jvh f]
+(defn vertex-fill-paint-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setVertexFillPaintTransformer rc (make-transformer f))
     jvh))
 
-(defn get-vertex-font-function [jvh]
-  (let [rc (.getRenderContext (:visualizer jvh))]
-    (.getVertexFontTransformer rc)))
-
-(defn set-vertex-font-function [jvh f]
+(defn vertex-font-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setVertexFontTransformer rc (make-transformer f))
     jvh))
 
-(defn get-edge-label-renderer [jvh]
-  (let [rc (.getRenderContext (:visualizer jvh))]
-    (.getEdgeLabelRenderer rc)))
-
-(defn set-edge-label-function [jvh f]
+(defn edge-label-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setEdgeLabelTransformer rc (make-transformer f))
     jvh))
 
-(defn set-edge-stroke-function [jvh f]
+(defn edge-stroke-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setEdgeStrokeTransformer rc (make-transformer f))
     jvh))
 
-(defn set-edge-draw-paint-function [jvh f]
+(defn edge-draw-paint-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setEdgeDrawPaintTransformer rc (make-transformer f))
     jvh))
 
-(defn set-arrow-draw-paint-function [jvh f]
+(defn arrow-draw-paint-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setArrowDrawPaintTransformer rc (make-transformer f))
     jvh))
 
-(defn set-edge-draw-paint-function [jvh f]
+(defn edge-draw-paint-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setEdgeDrawPaintTransformer rc (make-transformer f))
     jvh))
 
-(defn get-edge-shape-function [jvh]
+(defn edge-shape-fn! [jvh]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.getEdgeShapeTransformer rc)))
 
-(defn set-edge-shape-function [jvh f]
+(defn edge-shape-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setEdgeShapeTransformer rc (make-transformer f))
     jvh))
 
-(defn set-arrow-fill-paint-function [jvh f]
+(defn arrow-fill-paint-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setArrowFillPaintTransformer rc (make-transformer f))
     jvh))
 
-(defn set-arrow-stroke-function [jvh f]
+(defn arrow-stroke-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setEdgeArrowStrokeTransformer rc (make-transformer f))
     jvh))
 
-(defn set-edge-arrow-predicate [jvh f]
+(defn edge-arrow-p! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setEdgeArrowPredicate rc (make-predicate f))
     jvh))
 
-(defn set-vertex-renderer [jvh f]
+(defn vertex-renderer! [jvh f]
   (let [vr (reify Renderer$Vertex
              (paintVertex [this render-context layout vertex]
                (let [graphics-context (.getGraphicsContext render-context)
