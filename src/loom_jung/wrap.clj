@@ -19,7 +19,19 @@
     (step edges #{})))
 
 (defn wrap [loom-graph-atom]
-  (let [lg loom-graph-atom]
+  "Allows a Loom graph to be treated as a JUNG graph (primarily for
+   visualization purposes). To facilitate dynamic visualizations,
+   wrap Expects a Loom graph inside in an IDeref. A raw Loom graph will
+   be accepted; otherwise it will try to build a new, undirected
+   Loom graph from the argument. If you want to update the graph,
+   you will need to supply your own atom or other dereffable."
+  (let [lg (cond
+             (instance? clojure.lang.IDeref loom-graph-atom)
+               loom-graph-atom
+             (l/graph? loom-graph-atom)
+               (atom loom-graph-atom)
+             :default
+               (atom (l/graph loom-graph-atom)))]
     (proxy [AbstractGraph] []
 
       (addVertex [v]
