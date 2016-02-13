@@ -36,7 +36,7 @@
 
 (defn jung-graph-handler
   ([]  (JungGraphHandler. (jung-undirected-graph) (atom {})))
-  ([g] (JungGraphHandler. g (ref {}))))
+  ([g] (JungGraphHandler. g (atom {}))))
 
 (defn jung-add-vertex! [jgh v]
   (when (.addVertex (:jg jgh) v)
@@ -67,7 +67,7 @@
 (defn jung-empty! [jgh]
   ;; FIXME: Race conditions! Need java lock for these functions
   (dosync
-   (ref-set (:properties jgh) {}))
+   (swap! (:properties jgh) {}))
   (let [g  (:jg jgh)]
     (println "removing vertices " (.getVertices g))
     (doseq [e (vec (.getEdges g))] (.removeEdge g e))
@@ -103,7 +103,7 @@
 
 (defn jung-clear-property! [jgh v key]
   (dosync
-   (ref-set (:properties jgh) #(dissoc-in % [v key]))))
+   (swap! (:properties jgh) #(dissoc-in % [v key]))))
 
 (defn jung-get-property [jgh v key]
   (get-in @(:properties jgh) [v key]))
@@ -219,10 +219,6 @@
   (let [rc (.getRenderContext (:visualizer jvh))]
     (.setEdgeDrawPaintTransformer rc (make-transformer f))
     jvh))
-
-(defn edge-shape-fn! [jvh]
-  (let [rc (.getRenderContext (:visualizer jvh))]
-    (.getEdgeShapeTransformer rc)))
 
 (defn edge-shape-fn! [jvh f]
   (let [rc (.getRenderContext (:visualizer jvh))]
