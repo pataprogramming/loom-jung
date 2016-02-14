@@ -4,7 +4,7 @@
             [seesaw.options :refer [get-option-value apply-options option-map bean-option default-option option-provider]]
             [seesaw.util :refer [cond-doto to-dimension]]
             [seesaw.widget-options :only [widget-option-provider]])
-  (:import (edu.uci.ics.jung.algorithms.layout Layout CircleLayout FRLayout ISOMLayout SpringLayout StaticLayout)
+  (:import (edu.uci.ics.jung.algorithms.layout Layout CircleLayout FRLayout ISOMLayout KKLayout SpringLayout StaticLayout )
            (org.apache.commons.collections15 Predicate Transformer)))
 
 (defn- to-list [coll]
@@ -33,7 +33,7 @@
 
 (def graph-layout-options
   (option-map
-   (default-option :intializer #(.setInitializer %1 (make-point-transformer %2)))
+   (default-option :initializer #(.setInitializer %1 (make-point-transformer %2)))
    (default-option :size #(.setSize %1 (to-dimension %2)) #(.getSize %)
                    "Set the size of the visualization's space")))
 
@@ -75,6 +75,60 @@
 
 (defn spring-layout [g & {:keys [width height size] :as opts}]
   (cond-doto ^SpringLayout (apply-options (SpringLayout. (wrap g))
+                             (dissoc opts :width :height))
+    (and (not size)
+         (or width height)) (.setSize (or width 600) (or height 600))))
+
+(def fr-layout-options
+  (merge
+   graph-layout-options
+   (option-map
+    (default-option :attraction-multiplier #(.setAttractionMultipler %1 (double %2)))
+    (default-option :max-iterations #(.setMaxIterations %1 (Integer. %2)))
+    (default-option :repulsion-multiplier #(.setRepulsionMultiplier %1 (double %2))))))
+
+(option-provider FRLayout fr-layout-options)
+
+(defn fr-layout [g & {:keys [width height size] :as opts}]
+  (cond-doto ^FRLayout (apply-options (FRLayout. (wrap g))
+                             (dissoc opts :width :height))
+    (and (not size)
+         (or width height)) (.setSize (or width 600) (or height 600))))
+
+(option-provider ISOMLayout graph-layout-options)
+
+(defn isom-layout [g & {:keys [width height size] :as opts}]
+  (cond-doto ^ISOMLayout (apply-options (ISOMLayout. (wrap g))
+                             (dissoc opts :width :height))
+    (and (not size)
+         (or width height)) (.setSize (or width 600) (or height 600))))
+
+;; TODO Add support for alternate distance metrics
+(def kk-layout-options
+  (merge
+   graph-layout-options
+   (option-map
+    (bean-option :adjust-for-gravity Boolean boolean nil
+                 "Enable or disable the center of the screen as the center of gravity")
+    (bean-option :exchange-vertices Boolean boolean nil
+                 "Enable or disable vertex exchange for escaping local minima")
+    (default-option :disconnected-distance-multiplier #(.setDisconnectedDistanceMultiplier %1 (double %2)))
+    (default-option :length-factor #(.setLengthFactor %1 (double %2)))
+    (default-option :max-iterations #(.setMaxIterations %1 (Integer. %2)))
+    )))
+
+(option-provider KKLayout kk-layout-options)
+
+(defn kk-layout [g & {:keys [width height size] :as opts}]
+  (cond-doto ^KKLayout (apply-options (KKLayout. (wrap g))
+                             (dissoc opts :width :height))
+    (and (not size)
+         (or width height)) (.setSize (or width 600) (or height 600))))
+
+(option-provider StaticLayout graph-layout-options)
+
+(defn static-layout [g & {:keys [width height size] :as opts}]
+  (cond-doto ^StaticLayout (apply-options (StaticLayout. (wrap g))
                              (dissoc opts :width :height))
     (and (not size)
          (or width height)) (.setSize (or width 600) (or height 600))))

@@ -140,3 +140,6 @@
 
         (isSource [v e]
           (= v (.getSource this e)))))))
+
+;; add changelistener for updates to atom
+;; troubleshoot position problems with randomly generated graph

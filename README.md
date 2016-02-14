@@ -8,8 +8,12 @@ for taking advantage of JUNG's Swing-based graph visualization
 facilities.
 
 Unfortunately, JUNG has not seen a release since 2010. The functionality in
-`loom-jung` is experimental, and is probably best considered as a useful
-adjunct for exploring Loom-based graphs.
+`loom-jung` is experimental, and is probably best considered as a proof of
+concept.
+
+JUNG's API is extremely verbose, and `loom-jung` currently only covers a
+few functions. Doing anything significant with this library would require
+a fairly deep understanding JUNG.
 
 ## Usage
 
@@ -67,17 +71,19 @@ the `loom-jung` API. Here's an example of using a function to change node colors
 > (config! vv :vertex-fill #(if (even? %) Color/RED Color/BLUE))
 ```
 
-At the moment, only `spring-layout` (which is used by default) and `circle-layout` are wrapped.
-To give `circle-layout` a try:
+`spring-layout` is used by default, and several other layouts are also
+wrapped. For example, to give `circle-layout` a try:
 ```
 > (def cl (circle-config g))
 > (config! vv :layout cl)
 ```
 
 `spring-layout` is a dynamic layout that constantly refreshes, so any
-changes you make should be reflected immediately in the visualization.
-For now, most JUNG layouts must be manually refreshed.  (This will improve
-as `loom-jung` develops.)
+changes you make are reflected immediately in the visualization. This
+is not the case for most JUNG layouts, which must be manually
+redrawn. Unfortunately, this makes the JUNG visualizations less
+immediately useful to most Clojure programmers.
+
 ```
 > (swap! ga add-edges [11 12] [12 13] [11 13] [11 14])
 > (.repaint vv)
@@ -85,27 +91,44 @@ as `loom-jung` develops.)
 > (.repaint vv)
 ```
 
+## Supported Properties
+
 The following configuration properties are currently implemented for
-the `visualizer` (better documentation is forthcoming):
+the `visualizer`:
 ```
-:arrow-draw
-:arrow-fill
-:arrow-stroke
-:arrow?
-:edge-draw
-:edge-label
-:edge-renderer
-:edge-shape
-:edge-stroke
 :layout
+
 :vertex-draw
 :vertex-fill
 :vertex-font
 :vertex-label
-:vertex-renderer
 :vertex-shape
 :vertex-stroke
+
+:edge-draw
+:edge-label
+:edge-shape
+:edge-stroke
+
+:arrow?
+:arrow-draw
+:arrow-fill
+:arrow-stroke
+
+:vertex-renderer
+:edge-renderer
 ```
+
+Making effective use of these requires some knowledge of JUNG.  The
+most immediately interesting to play around with are the `:vertex-*`
+and `:edge-*` options (except for `:vertex-renderer` and
+`:edge-renderer`).  These take a function that expects a vertex or
+edge, and returns a `java.awt.*` object of the appropriate type.
+Note that `:arrow?` expects a predicate function that takes an edge
+and returns a boolean (`true` indicates that, in a directed graph,
+an arrowhead should be drawn). The other `:arrow-*` functions expect
+a JUNG `Context` object, and will be more difficult to work with until
+the `loom-jung` API is more developed.
 
 ## License
 
