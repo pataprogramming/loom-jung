@@ -48,14 +48,14 @@ dynamic visualization, we'll store it in an atom.
 ```
 
 A visualizer is a Swing component. At a minimum, it needs a graph
-supplied to it at creation. It expects a loom graph wrapped in something
-that can be dereferenced, but will if supplied a bare Loom graph it
+supplied to it at creation. It expects a Loom graph wrapped in something
+that can be dereferenced, but if supplied a bare Loom graph it
 will wrap it in an atom.
 ```
 > (def vv (visualizer ga))
 ```
 
-To see it in action, add it to a Swing JFrame:
+In order to display it, add it to a Swing `JFrame`:
 ```
 > (def f (frame))
 > (-> f (config! :content vv) pack! show!)
@@ -93,10 +93,10 @@ supply the graph directly to the layout when it's created.)
 ```
 
 JUNG has extensive facilities for customizing and interacting with the
-visualizations. The Java API is extremely verbose. `loom-jung` tries
-to simplify this as much as possible. For the currently wrapped API
-functions, you should be able to a standard Clojure function anyplace
-that a `Transformer` is expected..
+visualizations. The Java API is extremely verbose, and `loom-jung`
+tries to simplify this as much as possible. For the currently wrapped
+API functions, you should be able to supply a standard Clojure
+function anyplace that a `Transformer` is expected.
 
 For example, to add labels to the vertices:
 ```
@@ -105,7 +105,7 @@ For example, to add labels to the vertices:
 
 Nearly every aspect of the graph is adjustable, though most features
 are not yet supported by the `loom-jung` API. Here's an example of
-using a function to change node colors::
+using a function to change node colors:
 ```
 > (config! vv :vertex-fill #(if (even? %) (color "blue") (color "green")))
 ```
@@ -136,7 +136,7 @@ Furthermore, `circle-layout` won't update if the graph changes.
 
 For now, if you're using a non-dynamic layout like `circle-layout`,
 you'll need to create a new layout from scratch when the graph
-changes.  (Note that the new vertices show up in the top left corner
+changes.  (Note that the new vertices showed up in the top left corner
 after the repaint.)
 ```
 > (config! vv :layout (circle-layout ga))
