@@ -1,4 +1,4 @@
-(ns loom-jung.graph
+(ns loom-jung.visualization
   (:require [seesaw.config :refer [Configurable]]
             [seesaw.options :refer [get-option-value apply-options option-map default-option option-provider]]
             [seesaw.to-widget :refer [ToWidget]]
@@ -36,40 +36,29 @@
       clojure.lang.IFn
       (invoke [this arg] (.evaluate this arg))
       (applyTo [this [arg]] (.evaluate this arg)))))
-(defn update-layout [layout x y repulsion stretch]
-  (doto layout
-    ;(.setSize (Dimension. x y))
-    (.setRepulsionRange (int repulsion))
-    (.setStretch stretch)))
 
-(defn make-layout [g x y repulsion stretch]
-  (let [l (SpringLayout. g)]
-    (update-layout l x y repulsion stretch)
-    l))
+;; (defn make-layout [g x y repulsion stretch]
+;;   (let [l (SpringLayout. g)]
+;;     (update-layout l x y repulsion stretch)
+;;     l))
 
-(defn make-static-layout [g vertex-xy-fn w h]
-  (let [l (StaticLayout. g (make-transformer vertex-xy-fn) (Dimension. w h))]
-    l))
+;; (defn make-static-layout [g vertex-xy-fn w h]
+;;   (let [l (StaticLayout. g (make-transformer vertex-xy-fn) (Dimension. w h))]
+;;     l))
 
-(defn make-visualizer [layout x y]
-  (let [d  (Dimension. x y)
-        vm (DefaultVisualizationModel. layout ;d
-             )
-        vv (doto (VisualizationViewer. vm d)
-             (.setBackground Color/WHITE))]
-    vv))
+;; (defn make-visualizer [layout x y]
+;;   (let [d  (Dimension. x y)
+;;         vm (DefaultVisualizationModel. layout
+;;              )
+;;         vv (doto (VisualizationViewer. vm d)
+;;              (.setBackground Color/WHITE))]
+;;     vv))
 
-(defn jung-visualizer [jgh]
-  (let [g  (:jg jgh)
-        l  (make-layout g 650 650 100 0.75)
-        vv (make-visualizer l 650 650)]
-    vv))
-
-(defn jung-static-visualizer [jgh vertex-xy-fn]
-  (let [g  (:jg jgh)
-        l  (make-static-layout g vertex-xy-fn 650 650)
-        vv (make-visualizer l 650 650)]
-    vv))
+;; (defn jung-visualizer [jgh]
+;;   (let [g  (:jg jgh)
+;;         l  (make-layout g 650 650 100 0.75)
+;;         vv (make-visualizer l 650 650)]
+;;     vv))
 
 (extend-protocol Configurable
   VisualizationViewer
@@ -81,6 +70,12 @@
 
 (defmacro r-get [method]
   `(fn [vv# ] (-> vv# .getRenderer (. ~method)))  )
+
+(defmacro vm-set [method]
+  `(fn [vv# o#] (-> vv# .getVisualizationModel (. ~method o#)))  )
+
+(defmacro vm-get [method]
+  `(fn [vv# ] (-> vv# .getVisualizationModel (. ~method)))  )
 
 (defmacro rc-set-transform [method]
   `(fn [vv# f#] (-> vv# .getRenderContext (. ~method (make-transformer f#)))))
@@ -112,6 +107,10 @@
 
 (def jung-visualizer-options
   (option-map
+   (default-option :layout
+                   (vm-set setGraphLayout)
+                   (vm-get getGraphLayout)
+                   )
    (default-option :vertex-label
                    (rc-set-transform setVertexLabelTransformer)
                    (rc-get getVertexLabelTransformer)
