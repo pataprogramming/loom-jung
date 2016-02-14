@@ -64,7 +64,7 @@ can tweak things by directly manipulating the positions of vertices.
 ```
 > (def sl (-> vv .getGraphLayout))
 > (lock! sl 1) ; stop the SpringLayout from moving vertex 1
-> (location! sl 1 [300 300] ; set vertex 1's position to (300,300)
+> (location! sl 1 [300 300]) ; set vertex 1's position to (300,300)
 ```
 
 JUNG has extensive facilities for customizing and interacting with the visualizations. The Java
@@ -98,7 +98,7 @@ immediately useful to most Clojure programmers.
 
 ```
 > (config! vv :vertex-fill (color "red"))
-> (.repaint vv)
+> (.repaint vv)  ; Maybe necessary if the visualizer doesn't update automatically.
 ```
 
 Furthermore, `circle-layout` won't update if the graph changes.
@@ -107,8 +107,10 @@ Furthermore, `circle-layout` won't update if the graph changes.
 > (.repaint vv)
 ```
 
-For now, if you're using a non-dynamic layout, you'll need to create a
-new layout from scratch when the graph changes.
+For now, if you're using a non-dynamic layout like `circle-layout`,
+you'll need to create a new layout from scratch when the graph
+changes.  (Note that the new vertices show up in the top left corner
+after the repaint.)
 ```
 > (config! vv :layout (circle-layout ga))
 
