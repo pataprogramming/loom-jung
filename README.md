@@ -85,6 +85,28 @@ as `loom-jung` develops.)
 > (.repaint vv)
 ```
 
+The following configuration properties are currently implemented for
+the `visualizer` (better documentation is forthcoming):
+```
+:arrow-draw
+:arrow-fill
+:arrow-stroke
+:arrow?
+:edge-draw
+:edge-label
+:edge-renderer
+:edge-shape
+:edge-stroke
+:layout
+:vertex-draw
+:vertex-fill
+:vertex-font
+:vertex-label
+:vertex-renderer
+:vertex-shape
+:vertex-stroke
+```
+
 ## License
 
 Copyright © 2014-2016 Paul L. Snyder <paul@pataprogramming.com>
