@@ -41,7 +41,7 @@ dynamic visualization, we'll store it in an atom.
 
 Add some nodes and edges to it:
 ```
-user=> (swap! ga add-edges [1 2] [2 3] [3 4] [4 5] [5 1] [1 6] [2 7] [3 8] [4 9] [5 10])
+> (swap! ga add-edges [1 2] [2 3] [3 4] [4 5] [5 1] [1 6] [2 7] [3 8] [4 9] [5 10])
 ```
 
 A visualizer is a Swing component. At a minimum, it needs a graph supplied to it at creation.
