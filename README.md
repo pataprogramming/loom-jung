@@ -39,12 +39,7 @@ To have something to visualize, we'll need a Loom graph. As we want a
 dynamic visualization, we'll store it in an atom.
 
 ```
-> (def ga (atom (graph)))
-```
-
-Add some nodes and edges to it:
-```
-> (swap! ga add-edges [1 2] [2 3] [3 4] [4 5] [5 1] [1 6] [2 7] [3 8] [4 9] [5 10])
+> (def ga (atom (graph [1 2] [2 3] [3 1])))
 ```
 
 A visualizer is a Swing component. At a minimum, it needs a graph supplied to it at creation.
@@ -56,6 +51,14 @@ To see it in action, add it to a Swing JFrame:
 ```
 > (def f (frame))
 > (-> f (config! :content vv) pack! show!)
+```
+
+When using the default `spring-layout`, changes to nodes and edges will be reflected
+immediately.
+```
+> (swap! ga add-edges [3 4] [4 5] [5 1])
+> (swap! ga remove-edges [3 1])
+> (swap! ga add-edges [1 6] [2 7] [3 8] [4 9] [5 10])
 ```
 
 The `visualizer` uses a JUNG `SpringLayout` to position its vertices unless another layout
