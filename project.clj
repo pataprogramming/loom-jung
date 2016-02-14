@@ -1,4 +1,4 @@
-(defproject pataprogramming/loom-jung "0.1.0-SNAPSHOT"
+(defproject pataprogramming/loom-jung "0.1.0"
   :description "Visualize Loom graphs with JUNG"
   :url "http://github.io/pataprogramming/loom-jung/"
   :license {:name "Eclipse Public License"
