@@ -1,9 +1,11 @@
 (ns loom-jung.layout
-  (:require [seesaw.config :refer [Configurable]]
+  (:require [loom-jung.wrap :refer [wrap]]
+            [seesaw.config :refer [Configurable]]
             [seesaw.options :refer [get-option-value apply-options option-map bean-option default-option option-provider]]
             [seesaw.util :refer [cond-doto to-dimension]]
             [seesaw.widget-options :only [widget-option-provider]])
-  (:import (edu.uci.ics.jung.algorithms.layout Layout CircleLayout FRLayout ISOMLayout SpringLayout StaticLayout)))
+  (:import (edu.uci.ics.jung.algorithms.layout Layout CircleLayout FRLayout ISOMLayout SpringLayout StaticLayout)
+           (org.apache.commons.collections15 Predicate Transformer)))
 
 (defn- to-list [coll]
   (if (list? coll)
@@ -53,7 +55,7 @@
 (option-provider CircleLayout circle-layout-options)
 
 (defn circle-layout [g & {:keys [width height size :as opts]}]
-  (cond-doto ^CircleLayout (apply-options (CircleLayout. g)
+  (cond-doto ^CircleLayout (apply-options (CircleLayout. (wrap g))
                               (dissoc opts :width :height))
     (and (not size)
          (or width height)) (.setSize (or width 650) (or height 650))))
@@ -72,7 +74,7 @@
 (option-provider SpringLayout spring-layout-options)
 
 (defn spring-layout [g & {:keys [width height size] :as opts}]
-  (cond-doto ^SpringLayout (apply-options (SpringLayout. g)
+  (cond-doto ^SpringLayout (apply-options (SpringLayout. (wrap g))
                              (dissoc opts :width :height))
     (and (not size)
          (or width height)) (.setSize (or width 600) (or height 600))))

@@ -25,116 +25,118 @@
    be accepted; otherwise it will try to build a new, undirected
    Loom graph from the argument. If you want to update the graph,
    you will need to supply your own atom or other dereffable."
-  (let [lg (cond
-             (instance? clojure.lang.IDeref loom-graph-atom)
+  (if (instance? AbstractGraph loom-graph-atom)
+    loom-graph-atom
+    (let [lg (cond
+               (instance? clojure.lang.IDeref loom-graph-atom)
                loom-graph-atom
-             (l/graph? loom-graph-atom)
+               (l/graph? loom-graph-atom)
                (atom loom-graph-atom)
-             :default
+               :default
                (atom (l/graph loom-graph-atom)))]
-    (proxy [AbstractGraph] []
+      (proxy [AbstractGraph] []
 
-      (addVertex [v]
-        false)
+        (addVertex [v]
+          false)
 
-      (addEdge [e endpoints edge-type]
-        false)
+        (addEdge [e endpoints edge-type]
+          false)
 
-      (containsEdge [e]
-        (if (and (first (seq e)) (second (seq e)))
-          (l/has-edge? @lg (first (seq e)) (second (seq e)))))
+        (containsEdge [e]
+          (if (and (first (seq e)) (second (seq e)))
+            (l/has-edge? @lg (first (seq e)) (second (seq e)))))
 
-      (containsVertex [v]
-        (l/has-node? @lg v))
+        (containsVertex [v]
+          (l/has-node? @lg v))
 
-      (getDefaultEdgeType []
-        (if (l/directed? @lg)
-          EdgeType/DIRECTED
-          EdgeType/UNDIRECTED))
-
-      (getEdgeCount
-        ([]          (count (.getEdges this)))
-        ([edge-type] (if (= edge-type (.getDefaultEdgeType this))
-                       (count (.getEdges this))
-                       0)))
-
-      (getEdges
-        ([]          (if (l/directed? @lg)
-                       (l/edges @lg)
-                       (distinct-edges (l/edges @lg))))
-        ([edgeType]  (if (= edgeType (.getDefaultEdgeType this))
-                       (if (l/directed? @lg)
-                         (l/edges @lg)
-                         (distinct-edges (l/edges @lg)))
-                       #{})))
-
-      (getEdgeType [e]
-        (.getDefaultEdgeType this))
-
-      (getIncidentEdges [v] ;; FIXME: Check if JUNG expects incoming edges as well
-        (let [succ       (l/successors @lg v)
-              succ-edges (for [w succ] [v w])]
+        (getDefaultEdgeType []
           (if (l/directed? @lg)
-            (let [pred       (l/predecessors @lg v)
-                  pred-edges (for [u pred] [u v])]
-              (concat pred-edges succ-edges))
-            succ-edges)))
+            EdgeType/DIRECTED
+            EdgeType/UNDIRECTED))
 
-      (getNeighbors [v]
-        (if (l/directed? @lg)
-          (set/union (l/predecessors @lg v) (l/successors @lg v))
-          (l/successors @lg v)))
+        (getEdgeCount
+          ([]          (count (.getEdges this)))
+          ([edge-type] (if (= edge-type (.getDefaultEdgeType this))
+                         (count (.getEdges this))
+                         0)))
 
-      (getVertexCount []
-        (count (l/nodes @lg)))
+        (getEdges
+          ([]          (if (l/directed? @lg)
+                           (l/edges @lg)
+                           (distinct-edges (l/edges @lg))))
+          ([edgeType]  (if (= edgeType (.getDefaultEdgeType this))
+                         (if (l/directed? @lg)
+                           (l/edges @lg)
+                           (distinct-edges (l/edges @lg)))
+                         #{})))
 
-      (getVertices []
-        (l/nodes @lg))
+        (getEdgeType [e]
+          (.getDefaultEdgeType this))
 
-      (removeEdge [e]
-        false)
+        (getIncidentEdges [v] ;; FIXME: Check if JUNG expects incoming edges as well
+          (let [succ       (l/successors @lg v)
+                succ-edges (for [w succ] [v w])]
+            (if (l/directed? @lg)
+              (let [pred       (l/predecessors @lg v)
+                    pred-edges (for [u pred] [u v])]
+                (concat pred-edges succ-edges))
+              succ-edges)))
 
-      (removeVertex [e]
-        false)
+        (getNeighbors [v]
+          (if (l/directed? @lg)
+            (set/union (l/predecessors @lg v) (l/successors @lg v))
+            (l/successors @lg v)))
 
-      (getEndpoints [e]
-        (if (and (first (seq e))
-                 (second (seq e))
-                 (l/has-edge? @lg (first (seq e)) (second (seq e))))
-          (Pair. (first e) (second e))))
+        (getVertexCount []
+          (count (l/nodes @lg)))
 
-      (getInEdges [v]
-        (if (l/directed? @lg)
-          (l/predecessors @lg v)
-          (l/successors @lg v)))
+        (getVertices []
+          (l/nodes @lg))
 
-      (getOutEdges [v]
-        (l/successors @lg v))
+        (removeEdge [e]
+          false)
 
-      (getPredecessors [v]
-        (if (l/directed? @lg)
-          (l/predecessors @lg v)
-          (l/successors @lg v)))
+        (removeVertex [e]
+          false)
 
-      (getDest [e]
-        (if (and (l/directed? @lg)
-                 (first (seq e))
-                 (second (seq e))
-                 (l/has-edge? @lg (first (seq e)) (second (seq e))))
-          (second (seq e))))
+        (getEndpoints [e]
+          (if (and (first (seq e))
+                   (second (seq e))
+                   (l/has-edge? @lg (first (seq e)) (second (seq e))))
+            (Pair. (first e) (second e))))
 
-      (getSource [e]
-        (if (and (l/directed? @lg)
-                 (first (seq e))
-                 (second (seq e))
-                 (l/has-edge? @lg (first (seq e)) (second (seq e))))
-          (first (seq e))))
+        (getInEdges [v]
+          (if (l/directed? @lg)
+            (l/predecessors @lg v)
+            (l/successors @lg v)))
 
-      (getSuccessors [v]
-        (l/successors @lg v))
+        (getOutEdges [v]
+          (l/successors @lg v))
 
-      (isDest [v e]
-        (= v (.getDest this e)))
+        (getPredecessors [v]
+          (if (l/directed? @lg)
+            (l/predecessors @lg v)
+            (l/successors @lg v)))
 
-      (isSource [v e]
-        (= v (.getSource this e))))))
+        (getDest [e]
+          (if (and (l/directed? @lg)
+                   (first (seq e))
+                   (second (seq e))
+                   (l/has-edge? @lg (first (seq e)) (second (seq e))))
+            (second (seq e))))
+
+        (getSource [e]
+          (if (and (l/directed? @lg)
+                   (first (seq e))
+                   (second (seq e))
+                   (l/has-edge? @lg (first (seq e)) (second (seq e))))
+            (first (seq e))))
+
+        (getSuccessors [v]
+          (l/successors @lg v))
+
+        (isDest [v e]
+          (= v (.getDest this e)))
+
+        (isSource [v e]
+          (= v (.getSource this e)))))))

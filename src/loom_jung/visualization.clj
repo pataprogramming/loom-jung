@@ -1,7 +1,9 @@
 (ns loom-jung.visualization
-  (:require [seesaw.config :refer [Configurable]]
+  (:require [loom-jung.layout :refer [circle-layout spring-layout]]
+            [loom-jung.wrap :refer [wrap]]
+            [seesaw.config :refer [Configurable]]
             [seesaw.options :refer [get-option-value apply-options option-map default-option option-provider]]
-            [seesaw.to-widget :refer [ToWidget]]
+            [seesaw.util :refer [cond-doto to-dimension]]
             [seesaw.widget-options :only [widget-option-provider]])
   (:import (java.io StringWriter)
            (java.awt Color Dimension Paint Polygon Shape Stroke BasicStroke Point)
@@ -46,13 +48,6 @@
 ;;   (let [l (StaticLayout. g (make-transformer vertex-xy-fn) (Dimension. w h))]
 ;;     l))
 
-;; (defn make-visualizer [layout x y]
-;;   (let [d  (Dimension. x y)
-;;         vm (DefaultVisualizationModel. layout
-;;              )
-;;         vv (doto (VisualizationViewer. vm d)
-;;              (.setBackground Color/WHITE))]
-;;     vv))
 
 ;; (defn jung-visualizer [jgh]
 ;;   (let [g  (:jg jgh)
@@ -63,7 +58,7 @@
 (extend-protocol Configurable
   VisualizationViewer
   (config* [target name] (get-option-value target name))
-  (config!* [target args] (apply-options target args)))
+  (config!* [target args] (do (apply-options target args) (.repaint target))))
 
 (defmacro r-set [method]
   `(fn [vv# o#] (-> vv# .getRenderer (. ~method o#)))  )
@@ -72,10 +67,10 @@
   `(fn [vv# ] (-> vv# .getRenderer (. ~method)))  )
 
 (defmacro vm-set [method]
-  `(fn [vv# o#] (-> vv# .getVisualizationModel (. ~method o#)))  )
+  `(fn [vv# o#] (-> vv# .getModel (. ~method o#)))  )
 
 (defmacro vm-get [method]
-  `(fn [vv# ] (-> vv# .getVisualizationModel (. ~method)))  )
+  `(fn [vv# ] (-> vv# .getModel (. ~method)))  )
 
 (defmacro rc-set-transform [method]
   `(fn [vv# f#] (-> vv# .getRenderContext (. ~method (make-transformer f#)))))
@@ -105,7 +100,7 @@
                         x y w h true))))]
     (-> vv (.getRenderer) (.setVertexRenderer vr))))
 
-(def jung-visualizer-options
+(def visualizer-options
   (option-map
    (default-option :layout
                    (vm-set setGraphLayout)
@@ -176,4 +171,20 @@
                    (r-get getEdgeRenderer)
                    "set a JUNG EdgeRenderer")))
 
-(option-provider VisualizationViewer jung-visualizer-options)
+(option-provider VisualizationViewer visualizer-options)
+
+;; (defn make-visualizer [layout x y]
+;;   (let [d  (Dimension. x y)
+;;         vm (DefaultVisualizationModel. layout
+;;              )
+;;         vv (doto (VisualizationViewer. vm d)
+;;              (.setBackground Color/WHITE))]
+;;     vv))
+
+(defn visualizer [jg & {:keys [width height size layout :as opts]}]
+  (let [layout (or layout (spring-layout jg))
+        vm (DefaultVisualizationModel. layout)]
+    (cond-doto ^VisualizationViewer (apply-options (VisualizationViewer. vm)
+                                                   (dissoc opts :width :height :layout))
+      (and (not size)
+           (or width height)) (.setSize (or width 600) (or height 600)))))
