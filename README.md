@@ -28,8 +28,11 @@ To see it in action, start up a REPL from the project directory.
 ```
 % lein repl
 
-> (require [loom-jung.visualization :refer :all])
-> (require [loom-jung.layout :refer :all])
+> (require '[loom.graph :refer :all])
+> (require '[seesaw.core :refer :all])
+> (require '[seesaw.color :refer [color])
+> (require '[loom-jung.visualization :refer :all])
+> (require '[loom-jung.layout :refer :all])
 ```
 
 To have something to visualize, we'll need a Loom graph. As we want a
@@ -55,6 +58,14 @@ To see it in action, add it to a Swing JFrame:
 > (-> f (config! :content vv) pack! show!)
 ```
 
+The `visualizer` uses a JUNG `SpringLayout` to position its vertices unless another layout
+is specified.  As you will likely see, the graph tends to drift around the display area. We
+can tweak things by directly manipulating the positions of vertices.
+```
+> (def sl (-> vv .getGraphLayout))
+> (lock! sl 1) ; stop the SpringLayout from moving vertex 1
+> (location! sl 1 [300 300] ; set vertex 1's position to (300,300)
+
 JUNG has extensive facilities for customizing and interacting with the visualizations. The Java
 API is extremely verbose. `loom-jung` tries to simplify this as much as possible. For the
 currently wrapped API functions, you should be able to a standard Clojure function anyplace
@@ -68,13 +79,13 @@ For example, to add labels to the vertics:
 Nearly every aspect of the graph is adjustable, though most features are not yet supported by
 the `loom-jung` API. Here's an example of using a function to change node colors::
 ```
-> (config! vv :vertex-fill #(if (even? %) Color/RED Color/BLUE))
+> (config! vv :vertex-fill #(if (even? %) (color "blue") (color "green")))
 ```
 
 `spring-layout` is used by default, and several other layouts are also
 wrapped. For example, to give `circle-layout` a try:
 ```
-> (def cl (circle-config g))
+> (def cl (circle-layout ga))
 > (config! vv :layout cl)
 ```
 
@@ -85,11 +96,20 @@ redrawn. Unfortunately, this makes the JUNG visualizations less
 immediately useful to most Clojure programmers.
 
 ```
-> (swap! ga add-edges [11 12] [12 13] [11 13] [11 14])
-> (.repaint vv)
-> (config! vv :vertex-fill (constantly Color/BLACK))
+> (config! vv :vertex-fill (color "red"))
 > (.repaint vv)
 ```
+
+Furthermore, `circle-layout` won't update if the graph changes.
+```
+> (swap! ga add-edges [11 12] [12 13] [11 13] [11 14])
+> (.repaint vv)
+```
+
+For now, if you're using a non-dynamic layout, you'll need to create a
+new layout from scratch when the graph changes.
+```
+> (config! vv :layout (circle-layout ga))
 
 ## Supported Properties
 
