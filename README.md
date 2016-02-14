@@ -30,7 +30,7 @@ To see it in action, start up a REPL from the project directory.
 
 > (require '[loom.graph :refer :all])
 > (require '[seesaw.core :refer :all])
-> (require '[seesaw.color :refer [color])
+> (require '[seesaw.color :refer [color]])
 > (require '[loom-jung.visualization :refer :all])
 > (require '[loom-jung.layout :refer :all])
 ```
@@ -70,7 +70,7 @@ can tweak things by directly manipulating the positions of vertices.
 JUNG has extensive facilities for customizing and interacting with the visualizations. The Java
 API is extremely verbose. `loom-jung` tries to simplify this as much as possible. For the
 currently wrapped API functions, you should be able to a standard Clojure function anyplace
-that a Transformer is expected.
+that a `Transformer` is expected..
 
 For example, to add labels to the vertices:
 ```
@@ -97,7 +97,7 @@ redrawn. Unfortunately, this makes the JUNG visualizations less
 immediately useful to most Clojure programmers.
 
 ```
-> (config! vv :vertex-fill (color "red"))
+> (config! vv :vertex-fill (constantly (color "red")))
 > (.repaint vv)  ; Maybe necessary if the visualizer doesn't update automatically.
 ```
 
@@ -113,6 +113,7 @@ changes.  (Note that the new vertices show up in the top left corner
 after the repaint.)
 ```
 > (config! vv :layout (circle-layout ga))
+```
 
 ## Supported Properties
 
