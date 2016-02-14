@@ -17,7 +17,7 @@ require a fairly deep understanding JUNG.
 
 ### Leiningen/Clojars [group-id/name version]
 
-[![Clojars Project](http://clojars.org/pataprogramming/loom-graph/latest-version.svg)](http://clojars.org/pataprogramming/loom-graph)
+[![Clojars Project](https://img.shields.io/clojars/v/pataprogramming/loom-jung.svg)](https://clojars.org/pataprogramming/loom-jung)
 
 ## Usage
 
