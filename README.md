@@ -65,13 +65,14 @@ can tweak things by directly manipulating the positions of vertices.
 > (def sl (-> vv .getGraphLayout))
 > (lock! sl 1) ; stop the SpringLayout from moving vertex 1
 > (location! sl 1 [300 300] ; set vertex 1's position to (300,300)
+```
 
 JUNG has extensive facilities for customizing and interacting with the visualizations. The Java
 API is extremely verbose. `loom-jung` tries to simplify this as much as possible. For the
 currently wrapped API functions, you should be able to a standard Clojure function anyplace
 that a Transformer is expected.
 
-For example, to add labels to the vertics:
+For example, to add labels to the vertices:
 ```
 > (config! vv :vertex-label str)
 ```
