@@ -7,13 +7,17 @@ Framework](http://jung.sourceforge.net/).  This is particularly useful
 for taking advantage of JUNG's Swing-based graph visualization
 facilities.
 
-Unfortunately, JUNG has not seen a release since 2010. The functionality in
-`loom-jung` is experimental, and is probably best considered as a proof of
-concept.
+Unfortunately, JUNG has not seen a release since 2010. The
+functionality in `loom-jung` is experimental, and is probably best
+considered as a proof of concept.
 
-JUNG's API is extremely verbose, and `loom-jung` currently only covers a
-few functions. Doing anything significant with this library would require
-a fairly deep understanding JUNG.
+JUNG's API is extremely verbose, and `loom-jung` currently only covers
+a few functions. Doing anything significant with this library would
+require a fairly deep understanding JUNG.
+
+### Leiningen/Clojars [group-id/name version]
+
+[![Clojars Project](http://clojars.org/pataprogramming/loom-graph/latest-version.svg)](http://clojars.org/pataprogramming/loom-graph)
 
 ## Usage
 
@@ -21,7 +25,8 @@ a fairly deep understanding JUNG.
 Swing portions are implemented as extensions
 [Seesaw](http://github.com/daveray/seesaw).  At the moment,
 `loom-jung` is a proof-of-concept, providing only a few features to
-demonstrate basic visualizations.  The API is likely to change extensively.
+demonstrate basic visualizations.  The API is likely to change
+extensively.
 
 
 To see it in action, start up a REPL from the project directory.
@@ -42,7 +47,10 @@ dynamic visualization, we'll store it in an atom.
 > (def ga (atom (graph [1 2] [2 3] [3 1])))
 ```
 
-A visualizer is a Swing component. At a minimum, it needs a graph supplied to it at creation.
+A visualizer is a Swing component. At a minimum, it needs a graph
+supplied to it at creation. It expects a loom graph wrapped in something
+that can be dereferenced, but will if supplied a bare Loom graph it
+will wrap it in an atom.
 ```
 > (def vv (visualizer ga))
 ```
@@ -53,26 +61,40 @@ To see it in action, add it to a Swing JFrame:
 > (-> f (config! :content vv) pack! show!)
 ```
 
-When using the default `spring-layout`, changes to nodes and edges will be reflected
-immediately.
+When using the default `spring-layout`, changes to nodes and edges
+will be reflected immediately.
 ```
 > (swap! ga add-edges [3 4] [4 5] [5 1])
 > (swap! ga remove-edges [3 1])
 > (swap! ga add-edges [1 6] [2 7] [3 8] [4 9] [5 10])
 ```
 
-The `visualizer` uses a JUNG `SpringLayout` to position its vertices unless another layout
-is specified.  As you will likely see, the graph tends to drift around the display area. We
-can tweak things by directly manipulating the positions of vertices.
+The `visualizer` uses a JUNG `SpringLayout` to position its vertices
+unless another layout is specified.  As you will likely see, the graph
+tends to drift around the display area. We can tweak things by
+directly manipulating the positions of vertices.
 ```
-> (def sl (-> vv .getGraphLayout))
-> (lock! sl 1) ; stop the SpringLayout from moving vertex 1
-> (location! sl 1 [300 300]) ; set vertex 1's position to (300,300)
+> (def lo (-> vv .getGraphLayout))
+> (lock! lo 1) ; stop the SpringLayout from moving vertex 1
+> (location! lo 1 [300 300]) ; set vertex 1's position to (300,300)
 ```
 
-JUNG has extensive facilities for customizing and interacting with the visualizations. The Java
-API is extremely verbose. `loom-jung` tries to simplify this as much as possible. For the
-currently wrapped API functions, you should be able to a standard Clojure function anyplace
+`spring-layout` doesn't work well for extremely dense graphs, but
+sometimes you can improve its behavior by adjusting its parameters.
+Here, we create a new layout to use, as the one retrieved from the
+visualizer lacks the type information that Seesaw's configuration
+mechanism uses to find applicable options.
+```
+> (def sl (spring-layout ga))
+> (config! vv :layout sl)
+> (config! sl :force-multiplier 0.2 :stretch 0.3)
+> (config! sl :repulsion-range 200)
+```
+
+JUNG has extensive facilities for customizing and interacting with the
+visualizations. The Java API is extremely verbose. `loom-jung` tries
+to simplify this as much as possible. For the currently wrapped API
+functions, you should be able to a standard Clojure function anyplace
 that a `Transformer` is expected..
 
 For example, to add labels to the vertices:
@@ -80,8 +102,9 @@ For example, to add labels to the vertices:
 > (config! vv :vertex-label str)
 ```
 
-Nearly every aspect of the graph is adjustable, though most features are not yet supported by
-the `loom-jung` API. Here's an example of using a function to change node colors::
+Nearly every aspect of the graph is adjustable, though most features
+are not yet supported by the `loom-jung` API. Here's an example of
+using a function to change node colors::
 ```
 > (config! vv :vertex-fill #(if (even? %) (color "blue") (color "green")))
 ```
@@ -95,7 +118,7 @@ wrapped. For example, to give `circle-layout` a try:
 
 `spring-layout` is a dynamic layout that constantly refreshes, so any
 changes you make are reflected immediately in the visualization. This
-is not the case for most JUNG layouts, which must be manually
+is not the case for most JUNG layouts, which often must be manually
 redrawn. Unfortunately, this makes the JUNG visualizations less
 immediately useful to most Clojure programmers.
 
@@ -150,11 +173,11 @@ Making effective use of these requires some knowledge of JUNG.  The
 most immediately interesting to play around with are the `:vertex-*`
 and `:edge-*` options (except for `:vertex-renderer` and
 `:edge-renderer`).  These take a function that expects a vertex or
-edge, and returns a `java.awt.*` object of the appropriate type.
-Note that `:arrow?` expects a predicate function that takes an edge
-and returns a boolean (`true` indicates that, in a directed graph,
-an arrowhead should be drawn). The other `:arrow-*` functions expect
-a JUNG `Context` object, and will be more difficult to work with until
+edge, and returns a `java.awt.*` object of the appropriate type.  Note
+that `:arrow?` expects a predicate function that takes an edge and
+returns a boolean (`true` indicates that, in a directed graph, an
+arrowhead should be drawn). The other `:arrow-*` functions expect a
+JUNG `Context` object, and will be more difficult to work with until
 the `loom-jung` API is more developed.
 
 ## License
