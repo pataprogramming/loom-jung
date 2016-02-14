@@ -83,12 +83,13 @@ directly manipulating the positions of vertices.
 sometimes you can improve its behavior by adjusting its parameters.
 Here, we create a new layout to use, as the one retrieved from the
 visualizer lacks the type information that Seesaw's configuration
-mechanism uses to find applicable options.
+mechanism uses to find applicable options. (Note that you must
+supply the graph directly to the layout when it's created.)
 ```
 > (def sl (spring-layout ga))
 > (config! vv :layout sl)
 > (config! sl :force-multiplier 0.2 :stretch 0.3)
-> (config! sl :repulsion-range 200)
+> (config! sl :repulsion-range 150)
 ```
 
 JUNG has extensive facilities for customizing and interacting with the
@@ -182,7 +183,7 @@ the `loom-jung` API is more developed.
 
 ## License
 
-Copyright © 2014-2016 Paul L. Snyder <paul@pataprogramming.com>
+Copyright © 2014-2016 Paul L. Snyder
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
